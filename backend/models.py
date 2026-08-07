@@ -1,16 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Enum, DateTime, func
 from sqlalchemy.orm import relationship
 from .database import Base
-import enum
-
-class WeekDays(enum.Enum):
-    MONDAY = 'monday'
-    TUESDAY = 'tuesday'
-    WEDNESDAY = 'wednesday'
-    THURSDAY = 'thursday'
-    FRIDAY = 'friday'
-    SATURDAY = 'saturday'
-    SUNDAY = 'sunday'
+from .enums import WeekDays
     
 class User(Base):
     __tablename__ = 'users'
