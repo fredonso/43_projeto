@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, field_validator
 from datetime import datetime
-from .enums import WeekDays
+from ..core.enums import WeekDays
 
 class UserCreate(BaseModel):
     username: str

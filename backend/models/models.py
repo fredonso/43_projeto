@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Enum, DateTime, func
 from sqlalchemy.orm import relationship
-from .database import Base
-from .enums import WeekDays
+from ..core.database import Base
+from ..core.enums import WeekDays
     
 class User(Base):
     __tablename__ = 'users'

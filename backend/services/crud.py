@@ -1,4 +1,4 @@
-from . import models
+from ..models import models
 from datetime import datetime
 from sqlalchemy import cast, Date
 
