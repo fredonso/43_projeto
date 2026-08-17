@@ -9,7 +9,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, nullable=False, unique=True, index=True)
     password = Column(String, nullable=False, index=True)
-    tasks = relationship('Task', back_populates='user')
+    tasks = relationship('Task', back_populates='user', cascade='all, delete-orphan')
     completions = relationship('Completion', back_populates='user')
     
 class Task(Base):
@@ -20,8 +20,8 @@ class Task(Base):
     task_name = Column(String, nullable=False, index=True)
     task_description = Column(String, index=True)
     user = relationship('User', back_populates='tasks')
-    days = relationship('Day', back_populates='tasks')
-    completions = relationship('Completion', back_populates='tasks')
+    days = relationship('Day', back_populates='tasks', cascade='all, delete-orphan')
+    completions = relationship('Completion', back_populates='tasks', cascade='all, delete-orphan')
 
 class Day(Base):
     __tablename__ = 'task_days'
