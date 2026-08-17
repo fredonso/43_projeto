@@ -44,16 +44,16 @@ def updateTask(task, taskId, userId, db):
         db.refresh(updatedTask)
     return updatedTask
 
-def createCompletion(data, taskId, userId, db):
+def createCompletion(date, taskId, userId, db):
     newCompletion = models.Completion(
         user_id = userId,
         task_id = taskId,
-        completed_at = datetime.fromisoformat(data)
+        completed_at = datetime.fromisoformat(date)
     )
     db.add(newCompletion)
     db.commit()
     db.refresh(newCompletion)
     return newCompletion
 
-def listCompletions(data, userId, db):
-    return db.query(models.Completion).filter(models.Completion.user_id == userId, cast(models.Completion.completed_at, Date) == data).all()
+def listCompletions(date, userId, db):
+    return db.query(models.Completion).filter(models.Completion.user_id == userId, cast(models.Completion.completed_at, Date) == date).all()
