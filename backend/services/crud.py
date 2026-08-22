@@ -1,6 +1,5 @@
 from ..models import models
 from datetime import datetime
-from sqlalchemy import cast, Date
 
 def searchData(user, db):
     return db.query(models.User).filter(models.User.username == user).first()
@@ -15,9 +14,9 @@ def createUser(user, db):
 def createTasks(task, userId, db):
     newTask = models.Task(
         user_id=userId, 
-        task_name=task['taskName'], 
-        task_description=task['taskDescription'], 
-        days=[models.Day(day=d) for d in task['taskDays']]
+        task_name=task.task_name, 
+        task_description=task.task_description, 
+        days=[models.Day(day=d) for d in task.days]
         )
     db.add(newTask)
     db.commit()
@@ -28,27 +27,32 @@ def listTasks(userId, db):
     return db.query(models.Task).filter(models.Task.user_id == userId).all()
 
 def deleteTask(taskId, userId, db):
-    deletedTask = db.query(models.Task).filter(models.Task.user_id == userId, models.Task.id == taskId).first()
-    if deletedTask:
-        db.delete(deletedTask)
-        db.commit()
-    return deletedTask
+    verifyTask = db.query(models.Task).filter(models.Task.user_id == userId, models.Task.id == taskId).first()
+    if not verifyTask:
+        return None
+    db.delete(verifyTask)
+    db.commit()
+    return verifyTask
 
 def updateTask(task, taskId, userId, db):
-    updatedTask = db.query(models.Task).filter(models.Task.user_id == userId, models.Task.id == taskId).first()
-    if updatedTask:
-        updatedTask.task_name = task['taskName']
-        updatedTask.task_description = task['taskDescription']
-        updatedTask.days = [models.Day(day=d) for d in task['taskDays']]
-        db.commit()
-        db.refresh(updatedTask)
-    return updatedTask
+    verifyTask = db.query(models.Task).filter(models.Task.user_id == userId, models.Task.id == taskId).first()
+    if not verifyTask:
+        return None
+    verifyTask.task_name = task.task_name
+    verifyTask.task_description = task.task_description
+    verifyTask.days = [models.Day(day=d) for d in task.days]
+    db.commit()
+    db.refresh(verifyTask)
+    return verifyTask
 
 def createCompletion(date, taskId, userId, db):
+    verifyTask = db.query(models.Task).filter(models.Task.user_id == userId, models.Task.id == taskId).first()
+    if not verifyTask:
+        return None
     newCompletion = models.Completion(
         user_id = userId,
         task_id = taskId,
-        completed_at = datetime.fromisoformat(date)
+        completed_at = date.completed_at
     )
     db.add(newCompletion)
     db.commit()
@@ -56,4 +60,6 @@ def createCompletion(date, taskId, userId, db):
     return newCompletion
 
 def listCompletions(date, userId, db):
-    return db.query(models.Completion).filter(models.Completion.user_id == userId, cast(models.Completion.completed_at, Date) == date).all()
+    beginning = datetime.combine(date,datetime.min.time())
+    end = datetime.combine(date, datetime.max.time())
+    return db.query(models.Completion).filter(models.Completion.user_id == userId, models.Completion.completed_at.between(beginning, end)).all()

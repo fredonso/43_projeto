@@ -5,6 +5,9 @@ from datetime import datetime, timedelta, timezone
 from jose import jwt, JWTError
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy.orm import Session
+from ..core import database
+from . import crud
 
 httpBearer = HTTPBearer()
 load_dotenv("SECRET_KEY.env")
@@ -34,15 +37,16 @@ def validateToken(token: str) -> str:
     username: str = payload.get("sub")
     return username
 
-def currentUser(auth: HTTPAuthorizationCredentials = Depends(httpBearer)):
+def currentUser(auth: HTTPAuthorizationCredentials = Depends(httpBearer), db: Session = Depends(database.get_db)):
     token = auth.credentials
     error = HTTPException(status_code=401, detail='Não foi possível validar as credenciais', headers={"WWW-Authenticate": "Bearer"})
     try:
         username = validateToken(token)
         if not username:
             raise error
-        return username
-    except jwt.ExpiredSignatureError:
+    except (jwt.ExpiredSignatureError, JWTError):
         raise error
-    except JWTError:
-        raise error
+    userData = crud.searchData(username, db)
+    if not userData:
+        raise HTTPException(status_code=401, detail='Usuário não encontrado.')
+    return userData

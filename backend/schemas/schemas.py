@@ -38,3 +38,11 @@ class CompletionResponse(BaseModel):
     completed_at: datetime
     
     model_config = ConfigDict(from_attributes=True)
+    
+class TaskListResponse(BaseModel):
+    user_id: int
+    data: list[TaskResponse]
+    
+class CompletionListResponse(BaseModel):
+    user_id: int
+    data: list[CompletionResponse]
