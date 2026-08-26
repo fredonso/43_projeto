@@ -1,23 +1,32 @@
-import { createBrowserRouter } from "react-router-dom";
-import { Account, Tasks, Timeline } from "./components";
-import { TestToken } from './components/TestToken';
+import { createBrowserRouter, Outlet } from "react-router-dom";
+import { AccountCreate, AccountLogin, Tasks, Timeline, ErrorPage, TestToken } from "./components";
 
 export const router = createBrowserRouter([
     {
-        path: '/account',
-        element: <Account />,
-    },
-    {
-        element: <TestToken />,
+        element: <Outlet />,
+        errorElement: <ErrorPage />,
         children: [
             {
-                path: '/tasks',
-                element: <Tasks />,
+                path: '/account/create',
+                element: <AccountCreate />,
             },
             {
-                path: '/',
-                element: <Timeline />,
+                path: '/account/login',
+                element: <AccountLogin />,
             },
+            {
+                element: <TestToken />,
+                children: [
+                    {
+                        path: '/tasks',
+                        element: <Tasks />,
+                    },
+                    {
+                        path: '/',
+                        element: <Timeline />,
+                    },
+                ]
+            }
         ]
     }
 ]);
