@@ -10,7 +10,7 @@ router = APIRouter(prefix='/api', tags=['Auth'])
 
 @router.post('/users/', status_code=status.HTTP_201_CREATED)
 def createUser(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
-    if not user.username.strip() or not user.password.strip():
+    if not user.username or not user.password:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Todos os campos devem ser preenchidos.')
     hashPassword = auth.hashPassword(user.password)
     try:

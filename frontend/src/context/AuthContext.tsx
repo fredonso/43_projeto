@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import type { ReactNode } from "react";
+import { ApiError } from '../services/errors';
 
 interface AuthContextInterface {
     token: string | null,
@@ -23,7 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [token]);
 
-    const login = async (username: string, password: string) => {try{
+    const login = async (username: string, password: string) => {
         const response = await fetch('/api/login/', {
             method: 'POST',
             headers: {
@@ -34,21 +35,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         if (!response.ok) {
             const jsonError = await response.json();
-            throw new Error(jsonError.detail);
+            throw new ApiError(response.status, jsonError.detail);
         }
 
         const data = await response.json();
 
         setToken(data['access_token']);
-
-    } catch(error) {
-        if (error instanceof Error) {
-            alert(error.message);
-        } else {
-            alert('Ocorreu um erro inesperado.');
-        }
-        throw error;
-    }};
+    };
 
     const logout = () => {
         setToken(null);

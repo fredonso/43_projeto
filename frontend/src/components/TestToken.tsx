@@ -6,7 +6,7 @@ export function TestToken() {
     const { token } = useAuth();
 
     if (!token) {
-        return <Navigate to='/account' replace />
+        return <Navigate to='/account/login' replace />
     }
 
     return (

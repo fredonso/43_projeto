@@ -1,17 +1,18 @@
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator, Field, StringConstraints
+from typing_extensions import Annotated
 from datetime import datetime
 from ..core.enums import WeekDays
 
 class UserCreate(BaseModel):
-    username: str
-    password: str
+    username: Annotated[str, StringConstraints(strip_whitespace=True, min_length=6)]
+    password: str = Field(min_length=6)
     
 class UserLogin(BaseModel):
     username: str
     password: str
     
 class TaskCreate(BaseModel):
-    task_name: str
+    task_name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
     task_description: str | None
     days: list[WeekDays]
 
