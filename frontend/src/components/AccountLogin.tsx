@@ -26,6 +26,7 @@ export function AccountLogin() {
             setUsername('');
             setPassword('');
             alert('Login realizado com sucesso!');
+            navigate('/', {replace: true});
         } catch (erro: any) {
             if (erro.status === 422) {
                 alert('Preencha os campos corretamente.');
